@@ -9,15 +9,18 @@ This repository holds the source for this Specification, part of the family of [
 
 ### What does it do?
 
-- x
+- It provides a standard way of monitoring the statuses of Senders
 
 ### Why does it matter?
 
-- x
+- It offers standard models for minimum status reporting
+- It provides guidance, sets out expectations and requirements for sender status monitoring
 
 ### How does it work?
 
-- x
+- It documents the standard models Devices have to use in order to offer sender status monitoring
+- It lists the prerequisites and dependencies in terms of NMOS specifications
+- It describes the status monitoring domains along with expectations, behaviour and conformance requirements
 
 <!-- INTRO-END -->
 
