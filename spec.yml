@@ -1,9 +1,9 @@
 amwa_id: BCP-008-02
 url: https://specs.amwa.tv/bcp-008-02
-name: Sender Status
+name: NMOS Sender Status
 status: Work In Progress
 repo_name: bcp-008-02
-alt_repo_name: nmos-bcp-template
+alt_repo_name: bcp-sender-status
 repo_url: https://github.com/AMWA-TV/bcp-008-02
 releases:
 default_branch: v1.0-dev
