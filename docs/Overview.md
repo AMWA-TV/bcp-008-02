@@ -63,8 +63,9 @@ The proposed models are minimal and they can be implemented as is or derived in 
 
 The `statusReportingDelay` property allows clients to customize the reporting delay used by devices to report statuses. Devices MUST use 3s as the default value. All domain specific statuses are impacted by the configured `statusReportingDelay` as follows:
 
-* On Sender activation (it is expected for devices to go through a period of instability when starting to stream) domain specific statuses which offer an `Inactive` option MUST transition immediately to a Healthy state and delay the reporting of errors for the duration specified by `statusReportingDelay`, after which they can transition to any other state.
-* Once any Sender activation `statusReportingDelay` has elapsed, all domain specific statuses MUST delay the transition to a more healthy state by the configured `statusReportingDelay` value and MUST only make the transition if the healthier state is maintained for the duration. All domain specific statuses MUST make a transition to a less healthy state as soon as possible.
+* A sender is expected to go through a period of instability upon activation. Therefore, on Sender activation domain specific statuses offering an `Inactive` option MUST transition immediately to the Healthy state. Furthermore, after activation they MUST delay the reporting of non Healthy states for the duration specified by `statusReportingDelay`, as long as the Sender isn't being [deactivated](#deactivating-a-sender), and then transition to any other appropriate state.
+
+* Once any Sender activation `statusReportingDelay` has elapsed and the Sender isn't being [deactivated](#deactivating-a-sender), all domain specific statuses MUST delay the transition to a more healthy state by the configured `statusReportingDelay` value and MUST only make the transition if the healthier state is maintained for the duration. All domain specific statuses MUST make a transition to a less healthy state as soon as possible.
 
 ### Sender overall status
 
