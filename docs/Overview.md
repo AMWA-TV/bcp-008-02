@@ -89,11 +89,10 @@ This includes the following specific items which cover the connectivity domain:
   * linkStatusMessage
   * transmissionStatus
   * transmissionStatusMessage
-  * autoResetPacketCounters
+  * autoResetErrorCounters
 * Methods
-  * GetLostPackets
-  * GetLatePackets
-  * ResetPacketCounters
+  * GetTransmissionErrorCounters
+  * ResetErrorCounters
 
 | ![Sender connectivity](images/sender-model-connectivity.png) |
 |:--:|
@@ -132,17 +131,16 @@ Devices specify:
 
 The transmissionStatusMessage is a nullable property where devices can offer the reason and further details as to why the current status value was chosen.
 
-#### Late and lost packets
+#### Transmission error counters
 
-The sender monitoring model provides means of gathering metrics around late and lost packets. These are not statuses but instead enable further analysis when [link status](#link-status) or [transmission status](#transmission-status) indicate problems (are PartiallyHealthy or Unhealthy).
+The sender monitoring model provides means of gathering metrics around transmission errors. These are not statuses but instead enable further analysis when [link status](#link-status) or [transmission status](#transmission-status) indicate problems (are PartiallyHealthy or Unhealthy).
 
 The feature is expressed with the following methods:
 
-* GetLostPacketCounters - returns a collection of counters which hold the name and numeric value of the counter (this allows more capable devices to report lost packets across different interfaces).
-* GetLatePacketCounters - returns a collection of counters which hold the name and numeric value of the counter (this allows more capable devices to report late packets across different interfaces).
-* ResetPacketCounters - allows a client application to reset both the Lost and Late packet counters to 0.
+* GetTransmissionErrorCounters - returns a collection of counters which hold the name, description and numeric value of the counter (this allows more capable devices to report different categories of errors or errors across different interfaces).
+* ResetErrorCounters - allows a client application to reset error counters to 0.
 
-The `autoResetPacketCounters` property allows clients to configure if the packet counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset all packet counters to 0 after each activation.
+The `autoResetErrorCounters` property allows clients to configure if the error counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset all error counters to 0 after each activation.
 
 ### Sender synchronization
 
