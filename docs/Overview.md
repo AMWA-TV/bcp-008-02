@@ -143,7 +143,7 @@ Devices with capabilities to detect transmission errors MUST implement the follo
 
 The `autoResetErrorCounters` property allows clients to configure if the error counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset all error counters to 0 after each activation.
 
-Devices MUST be compliant with the monitoring model even when they do not have the capability to detect transmission errors. In such cases they MUST:
+Devices that do not have the capability to detect transmission errors MUST:
 
 * Implement the GetTransmissionErrorCounters method but return an empty collection
 * Implement the ResetErrorCounters method and allow it to be invoked successfully even though it will not have an affect on any error counters
@@ -171,10 +171,10 @@ The externalSynchronizationStatus property allows devices to expose the health o
 
 Devices MUST report the externalSynchronizationStatus as follows:
 
-* NotUsed - when the sender is not using external synchronization or when the device is itself the synchronization source (this is a neutral state)
-* Healthy - when the sender is locked to an external synchronization source (devices which expect synchronization from multiple interfaces are receiving it across all of them)
-* PartiallyHealthy - when the sender is locked to an external synchronization source and is expected to receive synchronization from multiple interfaces but some are not providing synchronization (Senders MUST also temporarily transition to this state when detecting a synchronization source change)
-* Unhealthy - when the sender is expected to use external synchronization but is not locked to any external synchronization source
+* NotUsed when the sender is not using external synchronization or when the device is itself the synchronization source (this is a neutral state)
+* Healthy when the sender is locked to an external synchronization source (devices which expect synchronization from multiple interfaces are receiving it across all of them)
+* PartiallyHealthy when the sender is locked to an external synchronization source and is expected to receive synchronization from multiple interfaces but some are not providing synchronization (Senders MUST also temporarily transition to this state when detecting a synchronization source change)
+* Unhealthy when the sender is expected to use external synchronization but is not locked to any external synchronization source
 
 The externalSynchronizationStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
 
@@ -205,7 +205,7 @@ Devices MUST be able to reset the `synchronizationSourceChanges` counter propert
 * When a sender activation occurs
 * When a client invokes the `ResetSynchronizationSourceChanges` method
 
-Devices MUST be compliant with the monitoring model even when they do not use external synchronization. In such cases they MUST:
+When devices do not use external synchronization they MUST:
 
 * Implement the synchronizationSourceId property and set its value to `internal`
 * Implement the synchronizationSourceChanges property and set its value to 0
