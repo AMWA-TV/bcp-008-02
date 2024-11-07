@@ -53,13 +53,15 @@ Devices in conformance to this BCP MUST use [NMOS Device Connection Management](
 
 The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor).
 
-This model MUST inherit from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor).
+This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor).
 
-The proposed models are minimal and they can be implemented as is or derived in [vendor specific variants](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which can add more statuses, properties and methods.
+For implementations to be in conformance with the BCP they MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or as a [vendor specific variant derived from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which can add more statuses, properties and methods.
 
 | ![Sender monitoring model](images/sender-model-minimal.png) |
 |:--:|
 | _**Sender monitoring model**_ |
+
+### Sender status reporting delay
 
 The `statusReportingDelay` property allows clients to customize the reporting delay used by devices to report statuses. Devices MUST use 3s as the default value. All domain specific statuses are impacted by the configured `statusReportingDelay` as follows:
 
@@ -81,8 +83,7 @@ Devices MUST follow the rules listed below when mapping specific domain statuses
 
 ### Sender connectivity
 
-The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor).  
-This includes the following specific items which cover the connectivity domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the connectivity domain:
 
 * Properties
   * linkStatus
@@ -102,13 +103,13 @@ This includes the following specific items which cover the connectivity domain:
 
 The linkStatus property allows devices to expose the health of all the physical links associated with the sender.
 
-Devices specify if:
+Devices MUST report the linkStatus as follows:
 
-* All of the interfaces are Up (equivalent to a Healthy state)
-* Some of the interfaces are Down (equivalent to a PartiallyHealthy state)
-* All interfaces are Down (equivalent to an Unhealthy state)
+* AllUp when all of the interfaces are Up (equivalent to a Healthy state)
+* SomeDown when some of the interfaces are Down (equivalent to a PartiallyHealthy state)
+* AllDown when all interfaces are Down (equivalent to an Unhealthy state)
 
-The linkStatusMessage is a nullable property where devices can offer the reason and further details as to why the current status value was chosen.
+The linkStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
 
 Devices are RECOMMENDED to publish information about which interfaces are down in the linkStatusMessage.
 
@@ -122,30 +123,35 @@ NIC1, NIC2 are down
 
 The transmissionStatus property allows devices to expose the health of the sender with regards to transmitting a stream successfully. Other connection problems like 802.1x authorization, DHCP and other causes are also reflected in the transmissionStatus.
 
-Devices specify:
+Devices MUST report the transmissionStatus as follows:
 
-* When the sender is Inactive (is a neutral state)
+* Inactive when the sender is Inactive (this is a neutral state)
 * Healthy when the sender is Active and transmitting the stream successfully without any detected errors
 * PartiallyHealthy when the sender is Active and transmitting the stream successfully whilst detecting recoverable errors
 * Unhealthy when the sender is Active and transmitting the stream successfully whilst detecting unrecoverable errors
 
-The transmissionStatusMessage is a nullable property where devices can offer the reason and further details as to why the current status value was chosen.
+The transmissionStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
 
 #### Transmission error counters
 
 The sender monitoring model provides means of gathering metrics around transmission errors. These are not statuses but instead enable further analysis when [link status](#link-status) or [transmission status](#transmission-status) indicate problems (are PartiallyHealthy or Unhealthy).
 
-The feature is expressed with the following methods:
+Devices with capabilities to detect transmission errors MUST implement the following methods:
 
-* GetTransmissionErrorCounters - returns a collection of counters which hold the name, description and numeric value of the counter (this allows more capable devices to report different categories of errors or errors across different interfaces).
-* ResetErrorCounters - allows a client application to reset error counters to 0.
+* GetTransmissionErrorCounters - returns a non empty collection of counters which hold the name, description and numeric value of the counter (this allows more capable devices to report different categories of errors or errors across different interfaces).
+* ResetErrorCounters - resets all error counters to 0.
 
 The `autoResetErrorCounters` property allows clients to configure if the error counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset all error counters to 0 after each activation.
 
+Devices that do not have the capability to detect transmission errors MUST:
+
+* Implement the GetTransmissionErrorCounters method but return an empty collection
+* Implement the ResetErrorCounters method and allow it to be invoked successfully even though it will not have an affect on any error counters
+* Implement the autoResetErrorCounters property and allow it to be changed even though it will not have an affect on the behavior of the device since no error counters are ever reported
+
 ### Sender synchronization
 
-The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor).  
-This includes the following specific items which cover the synchronization domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the synchronization domain:
 
 * Properties
   * externalSynchronizationStatus
@@ -163,18 +169,16 @@ This includes the following specific items which cover the synchronization domai
 
 The externalSynchronizationStatus property allows devices to expose the health of the sender with regards to its time synchronization mechanisms.
 
-Devices MUST specify:
+Devices MUST report the externalSynchronizationStatus as follows:
 
-* Not used - when the sender is not using external synchronization or when the device is itself the synchronization source (this is a neutral state)
-* Healthy - when the sender is locked to an external synchronization source (devices which expect synchronization from multiple interfaces are receiving it across all of them)
-* Partially healthy - when the sender is locked to an external synchronization source and is expected to receive synchronization from multiple interfaces but some are not providing synchronization (Senders MUST also temporarily transition to this state when detecting a synchronization source change)
-* Unhealthy - when the sender is expected to use external synchronization but is not locked to any external synchronization source
+* NotUsed when the sender is not using external synchronization or when the device is itself the synchronization source (this is a neutral state)
+* Healthy when the sender is locked to an external synchronization source (devices which expect synchronization from multiple interfaces are receiving it across all of them)
+* PartiallyHealthy when the sender is locked to an external synchronization source and is expected to receive synchronization from multiple interfaces but some are not providing synchronization (Senders MUST also temporarily transition to this state when detecting a synchronization source change)
+* Unhealthy when the sender is expected to use external synchronization but is not locked to any external synchronization source
 
-The externalSynchronizationStatusMessage is a nullable property where devices can offer the reason and further details as to why the current status value was chosen.
+The externalSynchronizationStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
 
-Devices are recommended to publish information about the previous synchronization source and interface retrieved from as well as the current synchronization source and interface retrieved from in the externalSynchronizationStatusMessage.
-
-Devices are RECOMMENDED to publish in the `externalSynchronizationStatusMessage` property information about the previous synchronization source and originating interface as well as the current synchronization source and its originating interface.
+Devices are RECOMMENDED to publish in the externalSynchronizationStatusMessage property information about the previous synchronization source and originating interface as well as the current synchronization source and its originating interface.
 
 Example:
 
@@ -192,7 +196,7 @@ previousSync:0x70:35:09:ff:fe:c7:da:00 from NIC1, currentSync: 0x00:0c:ec:ff:fe:
 
 When devices are configured to use external synchronization they MUST publish the synchronization source id currently being used and update the `externalSynchronizationStatus` property whenever it changes, using `null` if a synchronization source cannot be discovered. Devices which are not using external synchronization MUST populate this property with `internal` or their own id if they themselves are the synchronization source (e.g. the device is a grandmaster).
 
-When devices suffer a synchronization source change the `externalSynchronizationStatus` property MUST temporarily transition to a `PartiallyUnhealthy` state. It can then return to a different state if the operating conditions match it more closely (returning to a healthier state MUST respect the configured `statusReportingDelay` property).
+When devices suffer a synchronization source change the `externalSynchronizationStatus` property MUST temporarily transition to a `PartiallyUnhealthy` state. It can then return to a different state if the operating conditions match it more closely (returning to a healthier state MUST respect the requirements in the [status reporting delay section](#sender-status-reporting-delay)).
 
 Devices MUST report any synchronization source change as an increment to the `synchronizationSourceChanges` counter property.
 
@@ -201,10 +205,15 @@ Devices MUST be able to reset the `synchronizationSourceChanges` counter propert
 * When a sender activation occurs
 * When a client invokes the `ResetSynchronizationSourceChanges` method
 
+When devices do not use external synchronization they MUST:
+
+* Implement the synchronizationSourceId property and set its value to `internal`
+* Implement the synchronizationSourceChanges property and set its value to 0
+* Implement the ResetSynchronizationSourceChanges method and allow it to be invoked successfully even though it will not have an affect on the synchronizationSourceChanges property
+
 ### Sender essence validation
 
-The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor).  
-This includes the following specific items which cover the essence validation domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the essence validation domain:
 
 * Properties
   * essenceStatus
@@ -218,14 +227,14 @@ This includes the following specific items which cover the essence validation do
 
 The essenceStatus property allows devices to expose the health of the sender with regards to the validity of the essence being transmitted.
 
-Devices specify:
+Devices MUST report the essenceStatus as follows:
 
-* When the sender is Inactive (is a neutral state)
+* Inactive when the sender is Inactive (this is a neutral state)
 * Healthy when the sender is Active and has valid essence which meets all the requirements for transmission (devices without any ability to check essence health still use Healthy if they have essence to transmit)
 * PartiallyHealthy when the sender is Active and has suitable essence to transmit but it can detect errors in the validity of the essence (e.g. the device has an IP receiver feeding this sender with essence)
 * Unhealthy when the sender is active and has no essence or the essence is not suitable for transmission (does not meet the expectations configured for the sender)
 
-The streamStatusMessage is a nullable property where devices can offer the reason and further details as to why the current status value was chosen.
+The streamStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
 
 Examples:
 
