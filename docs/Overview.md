@@ -255,3 +255,25 @@ When a sender is being deactivated it MUST cleanly interrupt its transmission by
 * overallStatus
 * transmissionStatus
 * essenceStatus
+
+### Touchpoints and IS-04 senders
+
+Sender monitors make use of the [Touchpoints](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#touchpoints) mechanism inherited from [NcObject](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html) to attach to the correct sender identity.
+
+The `touchpoints` property of any [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) MUST have one or more touchpoints of which one and only one entry MUST be of type [NcTouchpointNmos](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#nctouchpointnmos) where the `resourceType` field MUST be set to "sender" and the `id` field MUST be set to the associated IS-04 sender UUID.
+
+Sender monitors MUST maintain a 1 to 1 relationship between its role and the sender resource it monitors (expressed via the `touchpoints` property) for the lifetime of the IS-04 sender resource.
+
+Touchpoints example:
+
+```json
+[
+  {
+    "contextNamespace": "x-nmos",
+    "resource": {
+      "resourceType": "sender",
+      "id": "9bfe1101-5513-45fa-ae3b-7e668e317bd5"
+    }
+  }
+]
+```
