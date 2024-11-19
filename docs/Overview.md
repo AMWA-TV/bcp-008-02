@@ -55,7 +55,7 @@ The technical model describing the monitoring requirements for a sender is [NcSe
 
 This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor).
 
-For implementations to be in conformance with the BCP they MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or as a [vendor specific variant derived from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which can add more statuses, properties and methods.
+Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant derived from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which MAY add more statuses, properties and methods but MUST still comply with the requirements set out in this specification.
 
 | ![Sender monitoring model](images/sender-model-minimal.png) |
 |:--:|
