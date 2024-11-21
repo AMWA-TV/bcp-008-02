@@ -55,7 +55,7 @@ The technical model describing the monitoring requirements for a sender is [NcSe
 
 This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor).
 
-For implementations to be in conformance with the BCP they MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or as a [vendor specific variant derived from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which can add more statuses, properties and methods.
+Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which MAY add more statuses, properties and methods but MUST still comply with the requirements set out in this specification.
 
 | ![Sender monitoring model](images/sender-model-minimal.png) |
 |:--:|
@@ -255,3 +255,35 @@ When a sender is being deactivated it MUST cleanly interrupt its transmission by
 * overallStatus
 * transmissionStatus
 * essenceStatus
+
+### Touchpoints and IS-04 senders
+
+Sender monitors make use of the [Touchpoints](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#touchpoints) mechanism inherited from [NcObject](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html) to attach to the correct sender identity.
+
+The `touchpoints` property of any [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) MUST have one or more touchpoints of which one and only one entry MUST be of type [NcTouchpointNmos](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#nctouchpointnmos) where the `resourceType` field MUST be set to "sender" and the `id` field MUST be set to the associated IS-04 sender UUID.
+
+Sender monitors MUST maintain a 1 to 1 relationship between its role and the sender resource it monitors (expressed via the `touchpoints` property) for the lifetime of the IS-04 sender resource.
+
+Touchpoints example:
+
+```json
+[
+  {
+    "contextNamespace": "x-nmos",
+    "resource": {
+      "resourceType": "sender",
+      "id": "9bfe1101-5513-45fa-ae3b-7e668e317bd5"
+    }
+  }
+]
+```
+
+### NcWorker inheritance
+
+[NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor) inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
+
+Since [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) inherits from the [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor) model then it also indirectly inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
+
+Sender monitors MUST always have the `enabled` property set to `true`.
+
+Sender monitors MUST NOT allow changes to the `enabled` property and instead MUST return `InvalidRequest` to Set method invocations for this property.
