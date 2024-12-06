@@ -46,7 +46,7 @@ Sender activation - An [IS-05 activation](https://specs.amwa.tv/is-05/latest/doc
 
 Devices in conformance to this BCP MUST comply with [NMOS Control Framework](https://specs.amwa.tv/ms-05-02/) for generating device models.  
 Devices in conformance to this BCP MUST comply with [NMOS Control Protocol](https://specs.amwa.tv/is-12/) to expose device models via a standard API with full support for notifications.  
-Devices in conformance to this BCP MUST comply with [NMOS Discovery and Registration](https://specs.amwa.tv/is-04/) to create and register Nodes, Devices and Sender resources.  
+Devices in conformance to this BCP MUST comply with [NMOS Discovery and Registration](https://specs.amwa.tv/is-04/) create, describe and register Nodes, Devices and Sender resources.  
 Devices in conformance to this BCP MUST comply with [NMOS Device Connection Management](https://specs.amwa.tv/is-05/) to perform connection management actions against Sender resources.  
 
 ## Sender monitoring
@@ -63,11 +63,11 @@ Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-cont
 
 ### Sender status reporting delay
 
-The `statusReportingDelay` property allows clients to customize the reporting delay used by devices to report statuses. Devices MUST use 3s as the default value. All domain specific statuses are impacted by the configured `statusReportingDelay` as follows:
+The `statusReportingDelay` property allows clients to customize the reporting delay used by devices to report statuses. Devices are RECOMMENDED to use 3s as the default value when the sender monitor object is first constructed and MUST allow it to be changed to values within the device's published constraints. Devices MUST allow setting the `statusReportingDelay` property to a value of 3s. All domain specific statuses are impacted by the configured `statusReportingDelay` as follows:
 
 * A sender is expected to go through a period of instability upon activation. Therefore, on Sender activation domain specific statuses offering an `Inactive` option MUST transition immediately to the Healthy state. Furthermore, after activation they MUST delay the reporting of non Healthy states for the duration specified by `statusReportingDelay`, as long as the Sender isn't being [deactivated](#deactivating-a-sender), and then transition to any other appropriate state.
 
-* Once any Sender activation `statusReportingDelay` has elapsed and the Sender isn't being [deactivated](#deactivating-a-sender), all domain specific statuses MUST delay the transition to a more healthy state by the configured `statusReportingDelay` value and MUST only make the transition if the healthier state is maintained for the duration. All domain specific statuses MUST make a transition to a less healthy state as soon as possible.
+* Once any Sender activation `statusReportingDelay` has elapsed and the Sender isn't being [deactivated](#deactivating-a-sender), all domain specific statuses MUST delay the transition to a more healthy state by the configured `statusReportingDelay` value and MUST only make the transition if the healthier state is maintained for the duration. All domain specific statuses MUST make a transition to a less healthy state without delay.
 
 ### Sender overall status
 
@@ -141,7 +141,7 @@ Devices with capabilities to detect transmission errors MUST implement the follo
 * GetTransmissionErrorCounters - returns a non empty collection of counters which hold the name, description and numeric value of the counter (this allows more capable devices to report different categories of errors or errors across different interfaces).
 * ResetErrorCounters - resets all error counters to 0.
 
-The `autoResetErrorCounters` property allows clients to configure if the error counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset all error counters to 0 after each activation.
+The `autoResetErrorCounters` property allows clients to configure if the error counters automatically reset with each Sender activation (by default devices are RECOMMENDED to have this enabled). If this is enabled, senders MUST reset all error counters to 0 after each activation. Devices MUST allow setting the `autoResetErrorCounters` property to a value of `true` and MAY allow setting the property to `false`.
 
 Devices that do not have the capability to detect transmission errors MUST:
 
@@ -171,7 +171,7 @@ The externalSynchronizationStatus property allows devices to expose the health o
 
 Devices MUST report the externalSynchronizationStatus as follows:
 
-* NotUsed when the sender is not using external synchronization or when the device is itself the synchronization source (this is a neutral state)
+* NotUsed when the sender is not intending to use external synchronization or when the device is itself the synchronization source (this is a neutral state)
 * Healthy when the sender is locked to an external synchronization source (devices which expect synchronization from multiple interfaces are receiving it across all of them)
 * PartiallyHealthy when the sender is locked to an external synchronization source and is expected to receive synchronization from multiple interfaces but some are not providing synchronization (Senders MUST also temporarily transition to this state when detecting a synchronization source change)
 * Unhealthy when the sender is expected to use external synchronization but is not locked to any external synchronization source
@@ -194,7 +194,7 @@ previousSync:0x70:35:09:ff:fe:c7:da:00 from NIC1, currentSync: 0x00:0c:ec:ff:fe:
 
 #### Synchronization source change
 
-When devices are configured to use external synchronization they MUST publish the synchronization source id currently being used in the `synchronizationSourceId` property and update the `externalSynchronizationStatus` property whenever it changes, using `null` if a synchronization source cannot be discovered. Devices which are not using external synchronization MUST populate this property with `internal` or their own id if they themselves are the synchronization source (e.g. the device is a grandmaster).
+When devices intend to use external synchronization they MUST publish the synchronization source id currently being used in the `synchronizationSourceId` property and update the `externalSynchronizationStatus` property whenever it changes, using `null` if a synchronization source cannot be discovered. Devices which are not intending to use external synchronization MUST populate this property with `internal` or their own id if they themselves are the synchronization source (e.g. the device is a grandmaster).
 
 When devices suffer a synchronization source change the `externalSynchronizationStatus` property MUST temporarily transition to a `PartiallyUnhealthy` state. It can then return to a different state if the operating conditions match it more closely (returning to a healthier state MUST respect the requirements in the [status reporting delay section](#sender-status-reporting-delay)).
 
