@@ -65,7 +65,7 @@ Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-cont
 
 The `statusReportingDelay` property allows clients to customize the reporting delay used by devices to report statuses. Devices are RECOMMENDED to use 3s as the default value when the sender monitor object is first constructed and MUST allow it to be changed to values within the device's published constraints. Devices MUST allow setting the `statusReportingDelay` property to a value of 3s. All domain specific statuses are impacted by the configured `statusReportingDelay` as follows:
 
-* A sender is expected to go through a period of instability upon activation. Therefore, on Sender activation domain specific statuses offering an `Inactive` option MUST transition immediately to the Healthy state. Furthermore, after activation they MUST delay the reporting of non Healthy states for the duration specified by `statusReportingDelay`, as long as the Sender isn't being [deactivated](#deactivating-a-sender), and then transition to any other appropriate state.
+* A sender is expected to go through a period of instability upon activation. Therefore, on Sender activation domain specific statuses offering an `Inactive` option MUST transition immediately to the Healthy state. Furthermore, after activation, as long as the Sender isn’t being [deactivated](#deactivating-a-sender), it MUST delay the reporting of non Healthy states for the duration specified by `statusReportingDelay`, and then transition to any other appropriate state.
 
 * Once any Sender activation `statusReportingDelay` has elapsed and the Sender isn't being [deactivated](#deactivating-a-sender), all domain specific statuses MUST delay the transition to a more healthy state by the configured `statusReportingDelay` value and MUST only make the transition if the healthier state is maintained for the duration. All domain specific statuses MUST make a transition to a less healthy state without delay.
 
@@ -77,12 +77,12 @@ The `statusReportingDelay` property allows clients to customize the reporting de
 
 The purpose of the overallStatus is to abstract and combine the specific domain statuses of a monitor into a single status which can be more easily observed and displayed by a simple client.
 
-`Note`: The overallStatus might remain the same even when specific domain statuses change but the overallStatusMessage might change because a different combination of internal states is causing the current overallStatus value.
+`Note`: The overallStatus might remain the same even when specific domain statuses change. However, the overallStatusMessage might change to indicate that a different combination of internal states is causing the current overallStatus value.
 
 Devices MUST follow the rules listed below when mapping specific domain statuses in the combined overallStatus:
 
 * When the Sender is Inactive the overallStatus uses the Inactive option
-* When the Sender is Active the overallStatus takes the worst state across the different domains (if one status is PartiallyHealthy (or equivalent) and another is Unhealthy (or equivalent) then the overallStatus would be Unhealthy)
+* When the Sender is Active the overallStatus takes the least healthy state of all domain statuses (if one status is PartiallyHealthy (or equivalent) and another is Unhealthy (or equivalent) then the overallStatus would be Unhealthy)
 * The overallStatus is Healthy only when all domain statuses are either Healthy or a neutral state (e.g. Not used)
 
 | ![Overall status mapping examples](images/overall-status.png) |
