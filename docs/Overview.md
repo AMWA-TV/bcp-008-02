@@ -88,10 +88,10 @@ The list of all status transition counter properties is:
 
 Devices MUST be able to reset ALL status transition counter properties in the following two ways:
 
-* When a sender activation occurs
-* When a client invokes the `ResetStatusTransitionCounters` method
+* When a sender activation occurs if `autoResetCounters` is set to `true`
+* When a client invokes the `ResetCounters` method
 
-The `autoResetStatusTransitionCounters` property allows clients to configure if ALL status transition counter properties automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset ALL status transition counter properties to 0 after each activation. Devices MUST allow setting the `autoResetStatusTransitionCounters` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to reset automatically after each activation.
+The `autoResetCounters` property allows clients to configure if ALL counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset ALL counters to 0 after each activation. Devices MUST allow setting the `autoResetCounters` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to reset automatically after each activation.
 
 ### Sender overall status
 
@@ -120,10 +120,8 @@ Devices MUST follow the rules listed below when mapping specific domain statuses
   * transmissionStatus
   * transmissionStatusMessage
   * transmissionStatusTransitionCounter
-  * autoResetErrorCounters
 * Methods
   * GetTransmissionErrorCounters
-  * ResetErrorCounters
 
 | ![Sender connectivity](images/sender-model-connectivity.png) |
 |:--:|
@@ -166,18 +164,14 @@ The transmissionStatusMessage is a nullable property where devices MAY offer the
 
 The sender monitoring model provides means of gathering metrics around transmission errors. These are not statuses but instead enable further analysis when [link status](#link-status) or [transmission status](#transmission-status) indicate problems (are PartiallyHealthy or Unhealthy).
 
-Devices with capabilities to detect transmission errors MUST implement the following methods:
+Devices with capabilities to detect transmission errors MUST implement the GetTransmissionErrorCounters method. This method returns a non empty collection of counters which hold the name, description and numeric value of the counter (this allows more capable devices to report different categories of errors or errors across different interfaces).
 
-* GetTransmissionErrorCounters - returns a non empty collection of counters which hold the name, description and numeric value of the counter (this allows more capable devices to report different categories of errors or errors across different interfaces).
-* ResetErrorCounters - resets all error counters to 0.
+Devices with capabilities to detect transmission errors MUST be able to reset ALL transmission error counters in the following two ways:
 
-The `autoResetErrorCounters` property allows clients to configure if the error counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset all error counters to 0 after each activation. Devices MUST allow setting the `autoResetErrorCounters` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to clear counters when re-activating the Sender.
+* When a sender activation occurs if `autoResetCounters` is set to `true`
+* When a client invokes the `ResetCounters` method
 
-Devices that do not have the capability to detect transmission errors MUST:
-
-* Implement the GetTransmissionErrorCounters method but return an empty collection
-* Implement the ResetErrorCounters method and allow it to be invoked successfully even though it will not have an affect on any error counters
-* Implement the autoResetErrorCounters property and allow it to be changed even though it will not have an affect on the behavior of the device since no error counters are ever reported
+Devices that do not have the capability to detect transmission errors MUST implement the GetTransmissionErrorCounters method but return an empty collection.
 
 ### Sender synchronization
 
@@ -188,9 +182,6 @@ Devices that do not have the capability to detect transmission errors MUST:
   * externalSynchronizationStatusMessage
   * externalSynchronizationStatusTransitionCounter
   * synchronizationSourceId
-  * synchronizationSourceChanges
-* Methods
-  * ResetSynchronizationSourceChanges
 
 | ![Sender synchronization](images/sender-model-synchronization.png) |
 |:--:|
@@ -229,20 +220,7 @@ When devices intend to use external synchronization they MUST publish the synchr
 
 When devices suffer a synchronization source change the `externalSynchronizationStatus` property MUST temporarily transition to a `PartiallyUnhealthy` state. It can then return to a different state if the operating conditions match it more closely (returning to a healthier state MUST respect the requirements in the [status reporting delay section](#sender-status-reporting-delay)).
 
-Devices MUST report any synchronization source change as an increment to the `synchronizationSourceChanges` counter property.
-
-Devices MUST be able to reset the `synchronizationSourceChanges` counter property in the following two ways:
-
-* When a sender activation occurs
-* When a client invokes the `ResetSynchronizationSourceChanges` method
-
-The `autoResetSynchronizationSourceChanges` property allows clients to configure if synchronization source changes automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset the property to 0 after each activation. Devices MUST allow setting the `autoResetSynchronizationSourceChanges` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to reset automatically after each activation.
-
-When devices do not use external synchronization they MUST:
-
-* Implement the synchronizationSourceId property and set its value to `internal`
-* Implement the synchronizationSourceChanges property and set its value to 0
-* Implement the ResetSynchronizationSourceChanges method and allow it to be invoked successfully even though it will not have an affect on the synchronizationSourceChanges property
+When devices do not use external synchronization they MUST implement the synchronizationSourceId property and set its value to `internal`.
 
 ### Sender essence validation
 
