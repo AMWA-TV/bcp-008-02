@@ -75,7 +75,7 @@ The `statusReportingDelay` property allows clients to customize the reporting de
 
 ### Sender status transition counters
 
-All sender specific domain statuses have an associated status transition counter property. These increment each time the associated status transitions to a less healthy state. Transitions to/from neutral states like `Inactive` or `NotUsed` are ignored.
+All sender specific domain statuses have an associated status transition counter property. These MUST increment each time the associated status transitions to a less healthy state. Transitions to/from neutral states like `Inactive` or `NotUsed` are ignored.
 
 The intention is that these properties store historical negative trend transitions for each status.
 
