@@ -244,7 +244,7 @@ Devices MUST report the essenceStatus as follows:
 * PartiallyHealthy when the sender is Active and has suitable essence to transmit but it can detect errors in the validity of the essence (e.g. the device has an IP receiver feeding this sender with essence and the sender can inherit health statuses from the associated receiver)
 * Unhealthy when the sender is active and has no essence or the essence is not suitable for transmission (does not meet the expectations configured for the sender)
 
-The streamStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
+The essenceStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
 
 Examples:
 
@@ -321,14 +321,14 @@ Controllers MUST be capable to get the current state of the following status pro
 * linkStatus
 * transmissionStatus
 * externalSynchronizationStatus
-* streamStatus
+* essenceStatus
 
 Controllers MUST be capable of tracking changes to the following status properties by using [subscriptions and notifications](https://specs.amwa.tv/is-12/latest/docs/Protocol_messaging.html#notification-message-type) and reflect these changes to the User:
 
 * linkStatus
 * transmissionStatus
 * externalSynchronizationStatus
-* streamStatus
+* essenceStatus
 
 Controllers MUST be capable of getting the current value of ALL status message properties using the [Get method](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#generic-getter-and-setter) and indicate it to the User.
 
