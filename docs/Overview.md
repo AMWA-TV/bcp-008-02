@@ -23,7 +23,7 @@ This document relies on previous familiarity with the following existing documen
 * [NMOS Discovery and Registration](https://specs.amwa.tv/is-04/)
 * [NMOS Device Connection Management](https://specs.amwa.tv/is-05/)
 
-The technical models referenced in this document are fully published in the [Monitoring NMOS Control Feature Set](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/).
+The technical models referenced in this document are fully published in the [Monitoring NMOS Control Feature Set](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/).
 
 The following domains are covered in terms of status monitoring with specific sections for each:
 
@@ -51,11 +51,11 @@ Devices in conformance to this BCP MUST comply with [NMOS Device Connection Mana
 
 ## Sender monitoring
 
-The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor).
+The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor).
 
-This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor).
+This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncstatusmonitor).
 
-Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which MAY add more statuses, properties and methods but MUST still comply with the requirements set out in this specification.
+Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which MAY add more statuses, properties and methods but MUST still comply with the requirements set out in this specification.
 
 | ![Sender monitoring model](images/sender-model-minimal.png) |
 |:--:|
@@ -111,7 +111,7 @@ Devices MUST follow the rules listed below when mapping specific domain statuses
 
 ### Sender connectivity
 
-[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the connectivity domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) includes the following specific items covering the connectivity domain:
 
 * Properties
   * linkStatus
@@ -175,7 +175,7 @@ Devices that do not have the capability to detect transmission errors MUST imple
 
 ### Sender synchronization
 
-[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the synchronization domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) includes the following specific items covering the synchronization domain:
 
 * Properties
   * externalSynchronizationStatus
@@ -222,7 +222,7 @@ When devices observe a synchronization source change the `externalSynchronizatio
 
 ### Sender essence validation
 
-[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the essence validation domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) includes the following specific items covering the essence validation domain:
 
 * Properties
   * essenceStatus
@@ -278,7 +278,7 @@ When a sender is being deactivated it MUST cleanly interrupt its transmission by
 
 Sender monitors make use of the [Touchpoints](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#touchpoints) mechanism inherited from [NcObject](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html) to attach to the correct sender identity.
 
-The `touchpoints` property of any [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) MUST have one or more touchpoints of which one and only one entry MUST be of type [NcTouchpointNmos](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#nctouchpointnmos) where the `resourceType` field MUST be set to "sender" and the `id` field MUST be set to the associated IS-04 sender UUID.
+The `touchpoints` property of any [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) MUST have one or more touchpoints of which one and only one entry MUST be of type [NcTouchpointNmos](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#nctouchpointnmos) where the `resourceType` field MUST be set to "sender" and the `id` field MUST be set to the associated IS-04 sender UUID.
 
 Sender monitors MUST maintain a 1 to 1 relationship between its role and the sender resource it monitors (expressed via the `touchpoints` property) for the lifetime of the IS-04 sender resource.
 
@@ -298,9 +298,9 @@ Touchpoints example:
 
 ### NcWorker inheritance
 
-[NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor) inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
+[NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncstatusmonitor) inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
 
-Since [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) inherits from the [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor) model then it also indirectly inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
+Since [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) inherits from the [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncstatusmonitor) model then it also indirectly inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
 
 Sender monitors MUST always have the `enabled` property set to `true`.
 
@@ -308,7 +308,7 @@ Sender monitors MUST NOT allow changes to the `enabled` property and instead MUS
 
 ## Controller
 
-Controllers MUST be capable to discover sender monitor objects (objects which implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html)) inside a device model and indicate them to the User. All blocks inside an MS-05-02 device allow [searching for members by their class id](https://specs.amwa.tv/ms-05-02/latest/docs/Blocks.html#search-methods).
+Controllers MUST be capable to discover sender monitor objects (objects which implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html)) inside a device model and indicate them to the User. All blocks inside an MS-05-02 device allow [searching for members by their class id](https://specs.amwa.tv/ms-05-02/latest/docs/Blocks.html#search-methods).
 
 Controllers MUST be capable to find the associated IS-04 sender identity for each sender monitor by using the [touchpoints](#touchpoints-and-is-04-senders) and indicate this relationship to the User.
 
