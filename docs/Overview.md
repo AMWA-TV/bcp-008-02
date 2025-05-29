@@ -107,6 +107,14 @@ For example, a number of domain statuses become less healthy when a network inte
 NIC 1 is down
 ```
 
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the overallStatusMessage could hold the following value
+
+```log
+Previously: NIC 1 is down
+```
+
 Devices MUST follow the rules listed below when mapping specific domain statuses in the combined overallStatus:
 
 * When the Sender is Inactive the overallStatus uses the Inactive option
@@ -155,6 +163,14 @@ Example:
 NIC1, NIC2 are down
 ```
 
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the linkStatusMessage could hold the following value
+
+```log
+Previously: NIC1, NIC2 are down
+```
+
 #### Transmission status
 
 The transmissionStatus property allows devices to expose the health of the sender with regards to transmitting a stream successfully. Other connection problems like 802.1x authorization, DHCP and other causes are also reflected in the transmissionStatus.
@@ -167,6 +183,14 @@ Devices MUST report the transmissionStatus as follows:
 * Unhealthy when the sender is Active and transmitting the stream successfully whilst detecting unrecoverable errors
 
 The transmissionStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the transmissionStatusMessage could hold the following value
+
+```log
+Previously: Transmission errors detected
+```
 
 #### Transmission error counters
 
@@ -213,13 +237,21 @@ Devices are RECOMMENDED to publish in the externalSynchronizationStatusMessage p
 Example:
 
 ```log
-previousSync:baseband from SDI1, currentSync: 0x00:0c:ec:ff:fe:0a:2b:a1 from NIC1
+Sync source change, from:baseband on SDI1, to: 0x00:0c:ec:ff:fe:0a:2b:a1 on NIC1
 ```
 
 or
 
 ```log
-previousSync:0x70:35:09:ff:fe:c7:da:00 from NIC1, currentSync: 0x00:0c:ec:ff:fe:0a:2b:a1 from NIC2
+Sync source change, from:0x70:35:09:ff:fe:c7:da:00 on NIC1, to: 0x00:0c:ec:ff:fe:0a:2b:a1 on NIC2
+```
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the externalSynchronizationStatusMessage could hold the following value
+
+```log
+Previously: Sync source change, from:baseband on SDI1, to: 0x00:0c:ec:ff:fe:0a:2b:a1 on NIC1
 ```
 
 #### Synchronization source change
@@ -257,15 +289,23 @@ The essenceStatusMessage is a nullable property where devices MAY offer the reas
 Examples:
 
 ```log
-Silence detected on input X
+Silence detected on input SDI1
 ```
 
 ```log
-Black detected on input X
+Black detected on input SDI1
 ```
 
 ```log
-No valid input signal on input X
+No valid input signal on input SDI1
+```
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the essenceStatusMessage could hold the following value
+
+```log
+Previously: No valid input signal on input SDI1
 ```
 
 ## Deactivating a sender
