@@ -23,7 +23,7 @@ This document relies on previous familiarity with the following existing documen
 * [NMOS Discovery and Registration](https://specs.amwa.tv/is-04/)
 * [NMOS Device Connection Management](https://specs.amwa.tv/is-05/)
 
-The technical models referenced in this document are fully published in the [Monitoring NMOS Control Feature Set](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/).
+The technical models referenced in this document are fully published in the [Monitoring NMOS Control Feature Set](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/).
 
 The following domains are covered in terms of status monitoring with specific sections for each:
 
@@ -51,11 +51,11 @@ Devices in conformance to this BCP MUST comply with [NMOS Device Connection Mana
 
 ## Sender monitoring
 
-The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor).
+The technical model describing the monitoring requirements for a sender is [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor).
 
-This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor).
+This model inherits from the baseline status monitoring model [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncstatusmonitor).
 
-Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which MAY add more statuses, properties and methods but MUST still comply with the requirements set out in this specification.
+Sender monitors MUST implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html) which MAY add more statuses, properties and methods but MUST still comply with the requirements set out in this specification.
 
 | ![Sender monitoring model](images/sender-model-minimal.png) |
 |:--:|
@@ -99,6 +99,22 @@ The purpose of the overallStatus is to abstract and combine the specific domain 
 
 `Note`: The overallStatus might remain the same even when specific domain statuses change. However, the overallStatusMessage might change to indicate that a different combination of internal states is causing the current overallStatus value.
 
+Where possible, Device implementations are RECOMMENDED to populate the overallStatusMessage with the root causes which led to the current PartiallyHealthy or Unhealthy overallStatus.
+
+For example, a number of domain statuses become less healthy when a network interface is down. In this case the overallStatusMessage could report the following root cause
+
+```log
+NIC 1 is down
+```
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the overallStatusMessage could hold the following value
+
+```log
+Previously: NIC 1 is down
+```
+
 Devices MUST follow the rules listed below when mapping specific domain statuses in the combined overallStatus:
 
 * When the Sender is Inactive the overallStatus uses the Inactive option
@@ -111,7 +127,7 @@ Devices MUST follow the rules listed below when mapping specific domain statuses
 
 ### Sender connectivity
 
-[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the connectivity domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) includes the following specific items covering the connectivity domain:
 
 * Properties
   * linkStatus
@@ -147,6 +163,14 @@ Example:
 NIC1, NIC2 are down
 ```
 
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the linkStatusMessage could hold the following value
+
+```log
+Previously: NIC1, NIC2 are down
+```
+
 #### Transmission status
 
 The transmissionStatus property allows devices to expose the health of the sender with regards to transmitting a stream successfully. Other connection problems like 802.1x authorization, DHCP and other causes are also reflected in the transmissionStatus.
@@ -159,6 +183,14 @@ Devices MUST report the transmissionStatus as follows:
 * Unhealthy when the sender is Active and transmitting the stream successfully whilst detecting unrecoverable errors
 
 The transmissionStatusMessage is a nullable property where devices MAY offer the reason and further details as to why the current status value was chosen.
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the transmissionStatusMessage could hold the following value
+
+```log
+Previously: Transmission errors detected
+```
 
 #### Transmission error counters
 
@@ -175,7 +207,7 @@ Devices that do not have the capability to detect transmission errors MUST imple
 
 ### Sender synchronization
 
-[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the synchronization domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) includes the following specific items covering the synchronization domain:
 
 * Properties
   * externalSynchronizationStatus
@@ -205,13 +237,21 @@ Devices are RECOMMENDED to publish in the externalSynchronizationStatusMessage p
 Example:
 
 ```log
-previousSync:baseband from SDI1, currentSync: 0x00:0c:ec:ff:fe:0a:2b:a1 from NIC1
+Sync source change, from:baseband on SDI1, to: 0x00:0c:ec:ff:fe:0a:2b:a1 on NIC1
 ```
 
 or
 
 ```log
-previousSync:0x70:35:09:ff:fe:c7:da:00 from NIC1, currentSync: 0x00:0c:ec:ff:fe:0a:2b:a1 from NIC2
+Sync source change, from:0x70:35:09:ff:fe:c7:da:00 on NIC1, to: 0x00:0c:ec:ff:fe:0a:2b:a1 on NIC2
+```
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the externalSynchronizationStatusMessage could hold the following value
+
+```log
+Previously: Sync source change, from:baseband on SDI1, to: 0x00:0c:ec:ff:fe:0a:2b:a1 on NIC1
 ```
 
 #### Synchronization source change
@@ -222,7 +262,7 @@ When devices observe a synchronization source change the `externalSynchronizatio
 
 ### Sender essence validation
 
-[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) includes the following specific items covering the essence validation domain:
+[NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) includes the following specific items covering the essence validation domain:
 
 * Properties
   * essenceStatus
@@ -249,15 +289,23 @@ The essenceStatusMessage is a nullable property where devices MAY offer the reas
 Examples:
 
 ```log
-Silence detected on input X
+Silence detected on input SDI1
 ```
 
 ```log
-Black detected on input X
+Black detected on input SDI1
 ```
 
 ```log
-No valid input signal on input X
+No valid input signal on input SDI1
+```
+
+Furthermore, where possible Device implementations are RECOMMENDED to retain the previous status message when returning to a Healthy state from a PartiallyHealthy or Unhealthy state by prepending the previous message with "Previously: ".
+
+For example, upon recovery to a healthy state the essenceStatusMessage could hold the following value
+
+```log
+Previously: No valid input signal on input SDI1
 ```
 
 ## Deactivating a sender
@@ -278,7 +326,7 @@ When a sender is being deactivated it MUST cleanly interrupt its transmission by
 
 Sender monitors make use of the [Touchpoints](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#touchpoints) mechanism inherited from [NcObject](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html) to attach to the correct sender identity.
 
-The `touchpoints` property of any [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) MUST have one or more touchpoints of which one and only one entry MUST be of type [NcTouchpointNmos](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#nctouchpointnmos) where the `resourceType` field MUST be set to "sender" and the `id` field MUST be set to the associated IS-04 sender UUID.
+The `touchpoints` property of any [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) MUST have one or more touchpoints of which one and only one entry MUST be of type [NcTouchpointNmos](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#nctouchpointnmos) where the `resourceType` field MUST be set to "sender" and the `id` field MUST be set to the associated IS-04 sender UUID.
 
 Sender monitors MUST maintain a 1 to 1 relationship between its role and the sender resource it monitors (expressed via the `touchpoints` property) for the lifetime of the IS-04 sender resource.
 
@@ -298,17 +346,17 @@ Touchpoints example:
 
 ### NcWorker inheritance
 
-[NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor) inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
+[NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncstatusmonitor) inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
 
-Since [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) inherits from the [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncstatusmonitor) model then it also indirectly inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
+Since [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) inherits from the [NcStatusMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncstatusmonitor) model then it also indirectly inherits from the [NcWorker](https://specs.amwa.tv/ms-05-02/latest/docs/Framework.html#ncworker) model.
 
-Sender monitors MUST always have the `enabled` property set to `true`.
+In the case of Sender monitors, the `enabled` property has no operational meaning and MUST NOT be interpreted in any way.
 
-Sender monitors MUST NOT allow changes to the `enabled` property and instead MUST return `InvalidRequest` to Set method invocations for this property.
+Devices MAY choose to not allow changes to the `enabled` property and instead return `InvalidRequest` to Set method invocations for this property.
 
 ## Controller
 
-Controllers MUST be capable to discover sender monitor objects (objects which implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/publish-status-reporting/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html)) inside a device model and indicate them to the User. All blocks inside an MS-05-02 device allow [searching for members by their class id](https://specs.amwa.tv/ms-05-02/latest/docs/Blocks.html#search-methods).
+Controllers MUST be capable to discover sender monitor objects (objects which implement [NcSenderMonitor](https://specs.amwa.tv/nmos-control-feature-sets/branches/main/monitoring/#ncsendermonitor) directly or derive a [vendor specific variant from NcSenderMonitor](https://specs.amwa.tv/ms-05-02/latest/docs/Introduction.html)) inside a device model and indicate them to the User. All blocks inside an MS-05-02 device allow [searching for members by their class id](https://specs.amwa.tv/ms-05-02/latest/docs/Blocks.html#search-methods).
 
 Controllers MUST be capable to find the associated IS-04 sender identity for each sender monitor by using the [touchpoints](#touchpoints-and-is-04-senders) and indicate this relationship to the User.
 
