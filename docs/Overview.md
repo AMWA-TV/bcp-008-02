@@ -88,10 +88,10 @@ The list of all status transition counter properties is:
 
 Devices MUST be able to reset ALL status transition counter properties in the following two ways:
 
-* When a sender activation occurs if `autoResetCounters` is set to `true`
-* When a client invokes the `ResetCounters` method
+* When a sender activation occurs if `autoResetCountersAndMessages` is set to `true`
+* When a client invokes the `ResetCountersAndMessages` method
 
-The `autoResetCounters` property allows clients to configure if ALL counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset ALL counters to 0 after each activation. Devices MUST allow setting the `autoResetCounters` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to reset automatically after each activation.
+The `autoResetCountersAndMessages` property allows clients to configure if ALL counters automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset ALL counters to 0 after each activation. Devices MUST allow setting the `autoResetCountersAndMessages` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to reset automatically after each activation.
 
 ### Sender overall status
 
@@ -124,6 +124,26 @@ Devices MUST follow the rules listed below when mapping specific domain statuses
 | ![Overall status mapping examples](images/overall-status.png) |
 |:--:|
 | _**Overall status mapping examples**_ |
+
+### Sender status messages
+
+The overall status and all sender specific domain statuses have an associated status message property.
+The list of all status message properties is:
+
+* overallStatusMessage
+* linkStatusMessage
+* transmissionStatusMessage
+* externalSynchronizationStatusMessage
+* essenceStatusMessage
+
+Resetting status message properties is achieved by assigning a value of `null` to them.
+
+Devices MUST be able to reset ALL status message properties in the following two ways:
+
+* When a sender activation occurs if `autoResetCountersAndMessages` is set to true
+* When a client invokes the `ResetCountersAndMessages` method
+
+The `autoResetCountersAndMessages` property allows clients to configure if ALL status message properties automatically reset with each Sender activation (by default devices MUST have this enabled). If this is enabled, senders MUST reset ALL status message properties after each activation. Devices MUST allow setting the `autoResetCountersAndMessages` property to a value of `true` and MAY allow setting the property to `false`. This supports use cases where users do not want to reset automatically after each activation.
 
 ### Sender connectivity
 
@@ -200,8 +220,8 @@ Devices with capabilities to detect transmission errors MUST implement the GetTr
 
 Devices with capabilities to detect transmission errors MUST be able to reset ALL transmission error counters in the following two ways:
 
-* When a sender activation occurs if `autoResetCounters` is set to `true`
-* When a client invokes the `ResetCounters` method
+* When a sender activation occurs if `autoResetCountersAndMessages` is set to `true`
+* When a client invokes the `ResetCountersAndMessages` method
 
 Devices that do not have the capability to detect transmission errors MUST implement the GetTransmissionErrorCounters method but return an empty collection.
 
@@ -396,9 +416,9 @@ Controllers MAY be capable of getting the transmission error counters from a dev
 
 Controllers SHOULD NOT resort to a fast pace repetitive polling workflow for getting the transmission error counters of a device which offers them.
 
-Controllers MAY be capable to invoke the ResetCounters method by using [IS-12 commands](https://specs.amwa.tv/is-12/latest/docs/Protocol_messaging.html#command-message-type).
+Controllers MAY be capable to invoke the ResetCountersAndMessages method by using [IS-12 commands](https://specs.amwa.tv/is-12/latest/docs/Protocol_messaging.html#command-message-type).
 
-Controllers MAY be capable to set the autoResetCounters property using the [Set method](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#generic-getter-and-setter).
+Controllers MAY be capable to set the autoResetCountersAndMessages property using the [Set method](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#generic-getter-and-setter).
 
 Controllers MAY be capable of getting the current value of ANY status transition counter property using the [Get method](https://specs.amwa.tv/ms-05-02/latest/docs/NcObject.html#generic-getter-and-setter) and indicate it to the User.
 
