@@ -1,4 +1,4 @@
-# \[Work In Progress\] AMWA BCP-008-02: NMOS Sender Status
+# AMWA BCP-008-02: NMOS Sender Status
 
 [![Lint Status](https://github.com/AMWA-TV/bcp-008-02/workflows/Lint/badge.svg)](https://github.com/AMWA-TV/bcp-008-02/actions?query=workflow%3ALint)
 [![Render Status](https://github.com/AMWA-TV/bcp-008-02/workflows/Render/badge.svg)](https://github.com/AMWA-TV/bcp-008-02/actions?query=workflow%3ARender)
